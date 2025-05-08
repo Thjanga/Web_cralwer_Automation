@@ -4,6 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoAlertPresentException
 from dotenv import load_dotenv
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
 import os, time
 
 load_dotenv()
@@ -19,16 +21,30 @@ def play_video():
             driver.switch_to.window(handle)
             break
 
-    time.sleep(3)
+    time.sleep(4)
 
+    # 위치 클릭으로 바꾸기 
     try:
         alert = driver.switch_to.alert # 이어보기
         alert.accept()
         print("이어보기 alert 처리")
     except NoAlertPresentException:
         try:
-            video_poster = driver.find_element(By.CLASS_NAME, 'vjs-poster') 
-            driver.execute_script("arguments[0].click();", video_poster) # 영상 재생
+            video_poster = driver.find_element(By.CLASS_NAME, 'vjs-big-play-button')
+            print(video_poster.text)
+            driver.execute_script("""
+        const video = document.querySelector('video');
+        if (video) {
+            video.muted = true;  // 자동재생 정책 우회
+            video.play();
+            console.log("비디오 재생 시도");
+        }
+    """) 
+            time.sleep(2)
+            actions = ActionChains(driver)
+            actions.send_keys('D').perform()
+
+            # 영상 재생
             print("영상 재생 시작")
         except Exception as e:
             print(f"재생 실패: {e}")
@@ -70,13 +86,16 @@ def play_video():
         time.sleep(5)
 
 # 메인
-driver = webdriver.Chrome()
+option = Options()
+option.add_argument(r'user-data-dir=C:\Users\kspqi\AppData\Local\Google\Chrome\User Data')
+option.add_argument('--no-proxy-server')
+driver = webdriver.Chrome(options=option)
 driver.get('https://cyber.anyang.ac.kr/')
 time.sleep(3)
 
 # 로그인
-driver.find_element(By.NAME, 'username').send_keys(os.getenv('uid'))
-driver.find_element(By.NAME, 'password').send_keys(os.getenv('upw'))
+driver.find_element(By.NAME, 'username').send_keys(os.getenv('universityid'))
+driver.find_element(By.NAME, 'password').send_keys(os.getenv('universitypw'))
 driver.find_element(By.CLASS_NAME, 'main_login_btn').click()
 time.sleep(2)
 
@@ -86,28 +105,29 @@ try:
 except:
     pass
 
-과목_리스트 = [1, 4, 6, 7]  # 수업 번호
+과목_리스트 = [3020,3906,3909,3912]  # 수업 번호 3020,3906,3909,3912
 
 for 과목번호 in 과목_리스트:
     try:
-        # 과목 클릭
-        driver.find_element(By.XPATH, f'//*[@id="page-content"]/div/div[1]/div[2]/ul/li[{과목번호}]/div/a/div/div[2]/h3').click()
+        # 과목 선택
+        driver.get(f'https://cyber.anyang.ac.kr/course/view.php?id={과목번호}')
         time.sleep(2)
 
         main_window = driver.current_window_handle
 
         # 주차 클릭
-        driver.find_element(By.XPATH, "//a[text()='5주차']").click()
+        week = 10
+        driver.find_element(By.XPATH, f"//a[text()='{week}주차']").click()
 
         # 주차 로딩 대기
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "li.section.main.week-5"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, f"li.section.main.week-{week}"))
         )
 
         # 섹션 탐색
-        week5_sections = driver.find_elements(By.CSS_SELECTOR, 'li.section.main.week-5')
+        week_sections = driver.find_elements(By.CSS_SELECTOR, f'li.section.main.week-{week}')
 
-        for section in week5_sections:
+        for section in week_sections:
             video_items = section.find_elements(By.CSS_SELECTOR, 'li.activity.vod.modtype_vod span.instancename')
 
             for el in video_items:
