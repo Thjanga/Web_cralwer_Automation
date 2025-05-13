@@ -85,10 +85,10 @@ def play_video():
             break
         time.sleep(5)
 
+
 # 메인
 option = Options()
 option.add_argument(r'user-data-dir=C:\Users\kspqi\AppData\Local\Google\Chrome\User Data')
-option.add_argument('--no-proxy-server')
 driver = webdriver.Chrome(options=option)
 driver.get('https://cyber.anyang.ac.kr/')
 time.sleep(3)
@@ -116,7 +116,7 @@ for 과목번호 in 과목_리스트:
         main_window = driver.current_window_handle
 
         # 주차 클릭
-        week = 10
+        week = 11
         driver.find_element(By.XPATH, f"//a[text()='{week}주차']").click()
 
         # 주차 로딩 대기
