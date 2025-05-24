@@ -90,7 +90,10 @@ def play_video():
 option = Options()
 option.add_argument(r'user-data-dir=C:\Users\kspqi\AppData\Local\Google\Chrome\User Data')
 driver = webdriver.Chrome(options=option)
-driver.get('https://cyber.anyang.ac.kr/')
+try:
+    driver.get('https://cyber.anyang.ac.kr/')
+except Exception as e:    
+    print(e)
 time.sleep(3)
 
 # 로그인
