@@ -44,7 +44,7 @@
 
 ---
 
-## 📑 기타
+##  기타
 - **University_Course_macro.py** : 자동 수강 매크로
 - **.gitignore** : 불필요한 파일 제외 설정  
 
