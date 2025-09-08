@@ -4,8 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoAlertPresentException
 from dotenv import load_dotenv
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.action_chains import ActionChains
 import os, time
 
 load_dotenv()
@@ -41,9 +39,7 @@ def play_video():
         }
     """) 
             time.sleep(2)
-            actions = ActionChains(driver)
-            actions.send_keys('D').perform()
-
+            
             # 영상 재생
             print("영상 재생 시작")
         except Exception as e:
@@ -87,28 +83,18 @@ def play_video():
 
 
 # 메인
-option = Options()
-option.add_argument(r'user-data-dir=C:\Users\kspqi\AppData\Local\Google\Chrome\User Data')
-driver = webdriver.Chrome(options=option)
-try:
-    driver.get('https://cyber.anyang.ac.kr/')
-except Exception as e:    
-    print(e)
+driver = webdriver.Chrome()
+driver.get('https://cyber.anyang.ac.kr/')
 time.sleep(3)
 
 # 로그인
-driver.find_element(By.NAME, 'username').send_keys(os.getenv('universityid'))
-driver.find_element(By.NAME, 'password').send_keys(os.getenv('universitypw'))
+driver.find_element(By.NAME, 'username').send_keys('2023E7038')
+driver.find_element(By.NAME, 'password').send_keys('taehun2003!')
 driver.find_element(By.CLASS_NAME, 'main_login_btn').click()
 time.sleep(2)
 
-# 공지 닫기
-try:
-    driver.find_element(By.CLASS_NAME, 'close_notice').click()
-except:
-    pass
 
-과목_리스트 = [3020,3906,3909,3912]  
+과목_리스트 = [4435,4448,4643,5283,5285,5290,5292,5294]  
 
 for 과목번호 in 과목_리스트:
     try:
@@ -119,7 +105,7 @@ for 과목번호 in 과목_리스트:
         main_window = driver.current_window_handle
 
         # 주차 클릭
-        week = 11
+        week = 2
         driver.find_element(By.XPATH, f"//a[text()='{week}주차']").click()
 
         # 주차 로딩 대기
