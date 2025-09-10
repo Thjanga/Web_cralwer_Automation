@@ -40,6 +40,7 @@ def play_video():
     """) 
             time.sleep(2)
 
+            
             # 영상 재생
             print("영상 재생 시작")
         except Exception as e:
